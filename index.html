@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nkosenhle Mesuli Sondezi — Workspace CV</title>
+  <meta name="description" content="A modern, animated, tabbed CV & portfolio workspace for Nkosenhle Mesuli Sondezi — Software Developer, Project Manager, Translator." />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --accent: #0ea5e9; /* cyan (light) */
+      --bg: #f8fafc;
+      --panel: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --shadow: 0 10px 30px rgba(2, 6, 23, .08);
+      --radius: 16px;
+      --nav-h: 70px;
+      --pill-h: 44px;
+      --elev: drop-shadow(0 10px 30px rgba(2,6,23,.15));
+    }
+
+    [data-theme="dark"] {
+      --accent: #a855f7; /* purple (dark) */
+      --bg: #0b1220;
+      --panel: #111827;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --border: #1f2937;
+      --shadow: 0 10px 30px rgba(0,0,0,.55);
+    }
+
+    * { box-sizing: border-box; margin:0; padding:0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.55; }
+
+    /* Top bar */
+    .topbar { position: sticky; top: 0; z-index: 60; backdrop-filter: blur(8px); background: color-mix(in oklab, var(--panel), transparent 20%); border-bottom: 1px solid var(--border); height: var(--nav-h); display:flex; align-items:center; justify-content:space-between; padding: 0 16px; }
+    .brand { display:flex; align-items:center; gap:10px; }
+    .avatar { width: 42px; height: 42px; border-radius: 50%; background: radial-gradient(120px 120px at 30% 30%, #fff, var(--accent)); color: #0b1020; display:flex; align-items:center; justify-content:center; font-weight:900; box-shadow: var(--shadow); border: 2px solid color-mix(in oklab, var(--accent), transparent 60%);}
+    .brand .name { font-weight:800; letter-spacing:.2px; }
+
+    .theme-toggle { background: var(--panel); border:1px solid var(--border); border-radius: 999px; padding:8px 12px; cursor:pointer; font-size:0.9rem; box-shadow: var(--shadow); }
+
+    /* Pills Tabs */
+    .tabs { position: sticky; top: var(--nav-h); z-index: 55; background: color-mix(in oklab, var(--panel), transparent 12%); border-bottom:1px solid var(--border); }
+    .tabs .wrap { max-width: 1100px; margin: 0 auto; padding: 10px 16px; display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+    .tab { height: var(--pill-h); display:inline-flex; align-items:center; gap:10px; padding:0 16px; border-radius: 999px; border:1px solid var(--border); background: var(--panel); color: var(--text); cursor:pointer; font-weight:700; transition: transform .15s ease, background .3s ease, color .3s ease, border .3s ease; box-shadow: var(--shadow); }
+    .tab[aria-selected="true"] { background: var(--accent); color: white; border-color: color-mix(in oklab, var(--accent), black 10%); transform: translateY(-1px); }
+    .tab:hover { transform: translateY(-1px); }
+
+    /* Container */
+    .container { max-width: 1100px; margin: 22px auto; padding: 0 16px 60px; }
+
+    /* Sections */
+    section.panel { background: var(--panel); border:1px solid var(--border); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); margin-bottom: 16px; }
+    .hidden { display:none !important; }
+    .fade-slide-enter { opacity: 0; transform: translateY(10px); }
+    .fade-slide-active { transition: opacity .35s ease, transform .35s ease; opacity:1; transform: translateY(0); }
+
+    h1 { font-size: clamp(1.8rem, 2.4vw + 1rem, 2.8rem); }
+    h2 { font-size: 1.25rem; color: var(--accent); border-bottom:2px solid var(--border); padding-bottom:6px; margin-bottom: 10px; }
+    .meta { color: var(--muted); font-size:.95rem; }
+
+    /* Hero (Home) */
+    .hero { position: relative; overflow: hidden; border-radius: calc(var(--radius) + 2px); background: linear-gradient(135deg, var(--accent), color-mix(in oklab, var(--accent), var(--bg) 70%)); color:white; padding: 40px 20px; box-shadow: var(--shadow); }
+    .hero .big { font-weight: 800; letter-spacing:.3px; }
+    .hero .sub { margin-top:6px; }
+    .quotes { margin-top:16px; display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:10px; }
+    .quote { background: color-mix(in oklab, white, transparent 70%); color:#0b1020; border-radius: var(--radius); padding: 14px; font-weight:600; box-shadow: var(--shadow); }
+
+    .pill-row { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+    .chip { background: var(--bg); border:1px solid var(--border); border-radius:999px; padding:6px 12px; font-size:.9rem; }
+
+    /* CV tab reused components */
+    .skills-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap:14px; }
+    .skill { background: var(--bg); border:1px solid var(--border); border-radius: var(--radius); padding:12px; }
+    .skill .label { display:flex; justify-content:space-between; font-weight:700; }
+    .bar { height:10px; background: #e5e7eb; border-radius:999px; overflow:hidden; margin-top:8px; }
+    .bar > span { display:block; height:100%; background: var(--accent); width:0; border-radius:999px; }
+
+    .timeline { position: relative; padding-left: 22px; }
+    .timeline::before { content:""; position:absolute; left:8px; top:4px; bottom:4px; width:2px; background: var(--border); }
+    .t-item { position:relative; margin-bottom:14px; }
+    .t-item::before { content:""; position:absolute; left:-2px; top:6px; width:10px; height:10px; background: var(--accent); border-radius:50%; }
+
+    .stats { display:grid; grid-template-columns: repeat(3,1fr); gap:12px; }
+    .stat { text-align:center; background: var(--bg); border:1px solid var(--border); border-radius: var(--radius); padding:14px; }
+    .stat .num { font-size:1.7rem; font-weight:800; color: var(--accent); }
+
+    /* Portfolio grid */
+    .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:16px; }
+    .card { background: var(--panel); border:1px solid var(--border); border-radius: var(--radius); overflow:hidden; box-shadow: var(--shadow); display:flex; flex-direction:column; }
+    .card .media { position:relative; padding-top:56%; background: radial-gradient(160% 120% at 20% 20%, color-mix(in oklab, var(--accent), white 40%), color-mix(in oklab, var(--accent), black 10%)); }
+    .card .body { padding:14px; display:flex; flex-direction:column; gap:8px; }
+    .tags { display:flex; flex-wrap:wrap; gap:6px; }
+    .tag { font-size:.8rem; border:1px solid var(--border); background: var(--bg); border-radius:999px; padding:4px 8px; }
+    .actions { display:flex; gap:8px; margin-top:auto; }
+    .btn { padding:10px 16px; border-radius:999px; border:1px solid var(--border); background: var(--panel); color: var(--text); font-weight:700; cursor:pointer; }
+    .btn.primary { background: var(--accent); color:white; border-color: color-mix(in oklab, var(--accent), black 10%); }
+    .btn.ghost { background: transparent; }
+
+    /* Contact form & modal */
+    form { display:flex; flex-direction:column; gap:12px; margin-top:10px; }
+    input, textarea, select { padding:10px; border-radius: var(--radius); border:1px solid var(--border); font-size:1rem; background: var(--bg); color: var(--text); }
+    textarea { min-height:120px; resize:vertical; }
+    .submit-btn { background: var(--accent); color:white; border:none; padding:12px; border-radius:999px; cursor:pointer; font-weight:800; }
+
+    .modal { position: fixed; inset:0; display:none; align-items:center; justify-content:center; background: rgba(0,0,0,.45); z-index: 80; }
+    .modal .card { width:min(560px, 92%); background: var(--panel); color: var(--text); border-radius: var(--radius); padding:22px; box-shadow: var(--shadow); text-align:center; }
+    .modal.show { display:flex; }
+
+    /* Floating Hire Me */
+    .floating-cta { position: fixed; right: 16px; bottom: 16px; z-index: 85; }
+
+    /* Footer + accent picker */
+    footer { margin-top: 14px; color: var(--muted); font-size:.95rem; text-align:center; }
+    .accent-picker { display:flex; gap:6px; align-items:center; justify-content:center; margin-top:10px; }
+    .swatch { width:22px; height:22px; border-radius:50%; border:1px solid var(--border); cursor:pointer; }
+
+    /* Responsive */
+    @media (max-width: 720px){ .stats{grid-template-columns:1fr;} }
+  </style>
+</head>
+<body>
+  <!-- Sticky top bar -->
+  <div class="topbar">
+    <div class="brand">
+      <div class="avatar">NS</div>
+      <div>
+        <div class="name">Nkosenhle Mesuli Sondezi</div>
+        <div class="meta">Software Developer · Project Manager · Translator</div>
+      </div>
+    </div>
+    <button class="theme-toggle" id="themeToggle">🌙 Dark</button>
+  </div>
+
+  <!-- Rounded-pill tabs -->
+  <div class="tabs">
+    <div class="wrap" role="tablist" aria-label="Main Tabs">
+      <button class="tab" role="tab" aria-selected="true" aria-controls="tab-home" id="tab-home-btn">🏠 Home</button>
+      <button class="tab" role="tab" aria-selected="false" aria-controls="tab-cv" id="tab-cv-btn">📄 CV</button>
+      <button class="tab" role="tab" aria-selected="false" aria-controls="tab-site" id="tab-site-btn">🌐 Personal Website</button>
+      <button class="tab" role="tab" aria-selected="false" aria-controls="tab-translate" id="tab-translate-btn">🌍 Translation</button>
+      <button class="tab" role="tab" aria-selected="false" aria-controls="tab-blog" id="tab-blog-btn">✍️ Blog</button>
+      <button class="tab" role="tab" aria-selected="false" aria-controls="tab-contact" id="tab-contact-btn">📩 Contact</button>
+    </div>
+  </div>
+
+  <main class="container">
+    <!-- HOME TAB -->
+    <section id="tab-home" class="panel">
+      <div class="hero">
+        <h1 class="big">Hi, I'm Nkosenhle — I build clear code, bridging languages, crafting stories, Where logic meets language and creativity.Coding solutions, translating worlds, writing connections.</h1>
+        <p class="sub">I blend <strong>Python</strong>, <strong>React</strong>, and <strong>PostgreSQL</strong> with calm execution and thoughtful project management.</p>
+        <div class="pill-row" style="margin-top:12px;">
+          <span class="chip">Based in Vryheid, South Africa</span>
+          <a class="chip" href="mailto:coin.sondezi@gmail.com">coin.sondezi@gmail.com</a>
+          <span class="chip">071 9494 550</span>
+        </div>
+      </div>
+
+      <section class="panel" style="margin-top:12px;">
+        <h2>Personal & Professional Summary</h2>
+        <p>I'm a motivated, versatile developer with a grounded background in <strong>Physics & Mathematics</strong>. I enjoy translating real‑world problems into reliable, maintainable code. I work iteratively: prototype → validate → refine. Clear communication, small PRs, and measurable outcomes are my defaults.</p>
+        <div class="pill-row">
+          <span class="chip">Python · Flask/FastAPI</span>
+          <span class="chip">React · hooks/state</span>
+          <span class="chip">SQL · data modeling</span>
+          <span class="chip">Agile · stakeholder comms</span>
+          <span class="chip">SEO · analytics</span>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Physics & Mathematics Expertise</h2>
+        <ul>
+          <li>Comfortable with modeling, optimization, and translating equations into algorithms.</li>
+          <li>Data analysis, uncertainty, and evidence‑driven decision making.</li>
+          <li>Strong problem decomposition and abstraction; verify with tests and metrics.</li>
+        </ul>
+      </section>
+
+      <section class="panel">
+        <h2>Quotes</h2>
+        <div class="quotes">
+          <div class="quote">“To shape meaning is to shape the future—whether in code, in language, or in story.”
+
+“Creation is translation: from idea to code, from thought to word, from vision to reality.”
+
+“Every act of building—software, stories, or bridges between languages—is a step toward clarity.”
+
+“The tools may differ—syntax, sentences, or systems—but the goal is the same: understanding.”
+
+“In every line written, in every word translated, we carve order from chaos.”</div>
+          <div class="quote">“ Craftsmanship is the promise that every detail carries integrity.”
+
+“Reliability is built, not claimed.”
+
+“Excellence lies in the discipline of doing it right—every time.”
+
+“True craftsmanship balances precision with trust.”
+
+“Reliability is the quiet strength behind lasting work.”</div>
+        </div>
+      </section>
+    </section>
+
+    <!-- CV TAB -->
+    <section id="tab-cv" class="panel hidden">
+      <h2>Professional Summary</h2>
+      <p>Motivated and versatile software developer with expertise in <strong>Python, React.js, and PostgreSQL</strong>. Strong foundation in project management, content creation, and translation. Known for analytical thinking, problem-solving, and adaptability.</p>
+
+      <h2 style="margin-top:12px;">Projects & Experience</h2>
+      <div class="timeline">
+        <div class="t-item">
+          <div><strong>Freelance Software Developer & Project Manager</strong> — Self, Vryheid <span class="meta">Apr 2023 – Present</span></div>
+          <ul>
+            <li>Developed user-focused applications including the Coin app.</li>
+            <li>Managed timelines, budgets, and client communications.</li>
+            <li>Delivered scalable solutions using Python, React.js, PostgreSQL.</li>
+          </ul>
+        </div>
+        <div class="t-item">
+          <div><strong>Sustainable Gardening Project Lead</strong> — Family Farm Initiative <span class="meta">Aug 2024 – Present</span></div>
+          <ul>
+            <li>Pioneered sustainable agriculture with organic farming practices.</li>
+            <li>Secured funding through persuasive proposals.</li>
+            <li>Collaborated to implement cost-effective infrastructure.</li>
+          </ul>
+        </div>
+        <div class="t-item">
+          <div><strong>Faith-Based Content Creator</strong> — Online Platforms <span class="meta">Jun 2023 – Present</span></div>
+          <ul>
+            <li>Produced blogs, videos, and podcasts with engaging storytelling.</li>
+            <li>Optimized website SEO and monitored analytics to expand reach.</li>
+          </ul>
+        </div>
+      </div>
+
+      <h2>Skills — What I Actually Do</h2>
+      <div class="skills-grid">
+        <div class="skill"><div class="label"><span>Python</span><span>Advanced</span></div><div class="bar"><span style="--w:90%"></span></div></div>
+        <div class="skill"><div class="label"><span>React.js</span><span>Advanced</span></div><div class="bar"><span style="--w:85%"></span></div></div>
+        <div class="skill"><div class="label"><span>PostgreSQL</span><span>Intermediate</span></div><div class="bar"><span style="--w:75%"></span></div></div>
+        <div class="skill"><div class="label"><span>JavaScript</span><span>Advanced</span></div><div class="bar"><span style="--w:85%"></span></div></div>
+        <div class="skill"><div class="label"><span>Flask</span><span>Intermediate</span></div><div class="bar"><span style="--w:72%"></span></div></div>
+        <div class="skill"><div class="label"><span>Data Analysis</span><span>Intermediate</span></div><div class="bar"><span style="--w:70%"></span></div></div>
+      </div>
+      <div class="pill-row" style="margin-top:12px;">
+        <span class="chip">Clean, typed Python · virtualenv</span>
+        <span class="chip">REST APIs · Flask/FastAPI</span>
+        <span class="chip">React hooks · state mgmt</span>
+        <span class="chip">SQL design · indexing</span>
+        <span class="chip">pytest · logging · debugging</span>
+        <span class="chip">Git · code reviews</span>
+        <span class="chip">Agile planning · comms</span>
+      </div>
+
+      <h2>Education</h2>
+      <ul>
+        <li><strong>BSc in Physics & Mathematics</strong> — University of KwaZulu-Natal <span class="meta">2020 – Present</span></li>
+        <li><strong>National Senior Certificate</strong> — Mondlo Secondary School <span class="meta">2015 – 2019</span></li>
+      </ul>
+
+      <h2>Achievements & Stats</h2>
+      <div class="pill-row" style="margin-bottom:10px;">
+        <span class="chip">🏆 SEO Basics</span>
+        <span class="chip">🏅 Community Leadership</span>
+        <span class="chip">📈 Analytics familiarity</span>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="num" data-count="12">0</div><div class="label">Projects Completed</div></div>
+        <div class="stat"><div class="num" data-count="5">0</div><div class="label">Languages Spoken</div></div>
+        <div class="stat"><div class="num" data-count="3">0</div><div class="label">Tech Stacks</div></div>
+      </div>
+    </section>
+
+    <!-- PERSONAL WEBSITE TAB -->
+    <section id="tab-site" class="panel hidden">
+      <h2>Featured Projects</h2>
+      <div class="grid" id="portfolioGrid">
+        <article class="card">
+          <div class="media"></div>
+          <div class="body">
+            <strong>Coin App</strong>
+            <p class="meta">A lightweight finance tracker with clean UI and fast local storage sync.</p>
+            <div class="tags">
+              <span class="tag">React</span>
+              <span class="tag">TypeScript</span>
+              <span class="tag">IndexedDB</span>
+            </div>
+            <div class="actions">
+              <button class="btn primary" onclick="alert('Demo placeholder')">Live Demo</button>
+              <button class="btn ghost" onclick="window.open('https://github.com/','_blank')">Source</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="media"></div>
+          <div class="body">
+            <strong>Portfolio Engine</strong>
+            <p class="meta">A static site generator template optimized for Pages & SEO.</p>
+            <div class="tags">
+              <span class="tag">Python</span>
+              <span class="tag">Jinja</span>
+              <span class="tag">Cloudflare Pages</span>
+            </div>
+            <div class="actions">
+              <button class="btn primary" onclick="alert('Demo placeholder')">Live Demo</button>
+              <button class="btn ghost" onclick="window.open('https://github.com/','_blank')">Source</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="media"></div>
+          <div class="body">
+            <strong>Data Insights Mini</strong>
+            <p class="meta">Small analytics dashboard with CSV upload and visual summaries.</p>
+            <div class="tags">
+              <span class="tag">Flask</span>
+              <span class="tag">PostgreSQL</span>
+              <span class="tag">Charts</span>
+            </div>
+            <div class="actions">
+              <button class="btn primary" onclick="alert('Demo placeholder')">Live Demo</button>
+              <button class="btn ghost" onclick="window.open('https://github.com/','_blank')">Source</button>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <h2 style="margin-top:14px;">Services</h2>
+      <ul>
+        <li>Frontend: Responsive, accessible React UIs</li>
+        <li>Backend: Minimal, well‑tested APIs (Flask/FastAPI)</li>
+        <li>Data: SQL schema design, queries, dashboards</li>
+        <li>Project: Planning, scoping, stakeholder communication</li>
+      </ul>
+    </section>
+
+    <!-- TRANSLATION TAB -->
+    <section id="tab-translate" class="panel hidden">
+      <h2>Translation Services</h2>
+      <p>I translate content across <strong>English</strong>, <strong>isiZulu</strong>, <strong>seTswana</strong>, <strong>isiXhosa</strong>, and <strong>sePedi</strong>. I focus on clarity, tone, and cultural accuracy.</p>
+      <div class="pill-row">
+        <span class="chip">Documents & Articles</span>
+        <span class="chip">Web & App Copy</span>
+        <span class="chip">Subtitles & Captions</span>
+        <span class="chip">Technical Notes</span>
+      </div>
+
+      <h2 style="margin-top:12px;">Quick Demo (Placeholder)</h2>
+      <div class="panel">
+        <label class="meta" for="demoText">Text</label>
+        <textarea id="demoText" placeholder="Paste a short text…"></textarea>
+        <div class="pill-row">
+          <select id="demoFrom">
+            <option>English</option>
+            <option>isiZulu</option>
+            <option>seTswana</option>
+            <option>isiXhosa</option>
+            <option>sePedi</option>
+          </select>
+          <span class="meta" style="align-self:center;">→</span>
+          <select id="demoTo">
+            <option>isiZulu</option>
+            <option>English</option>
+            <option>seTswana</option>
+            <option>isiXhosa</option>
+            <option>sePedi</option>
+          </select>
+          <button class="btn" id="demoTranslateBtn" type="button">Preview</button>
+        </div>
+        <label class="meta" for="demoOut">Preview Result</label>
+        <textarea id="demoOut" placeholder="(demo only)"></textarea>
+        <div class="pill-row">
+          <a class="btn primary" href="mailto:coin.sondezi@gmail.com?subject=Translation%20Request">Request Translation</a>
+          <button class="btn ghost" onclick="alert('Upload placeholder')">Upload Document</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- BLOG TAB -->
+    <section id="tab-blog" class="panel hidden">
+      <h2>Thoughts & Writing</h2>
+      <ul>
+        <li><strong>Designing a Minimal API with Flask</strong> — blueprint‑first approach for side projects. <span class="meta">(draft)</span></li>
+        <li><strong>What I learned building my Coin app</strong> — balancing scope, UX, performance. <span class="meta">(draft)</span></li>
+        <li><strong>Problem solving like a physicist</strong> — hypotheses, experiments, iterations. <span class="meta">(draft)</span></li>
+      </ul>
+    </section>
+
+    <!-- CONTACT TAB -->
+    <section id="tab-contact" class="panel hidden">
+      <h2>Contact Me</h2>
+      <p>Use the form below — it emails me directly via Formsubmit.</p>
+      <form action="https://formsubmit.co/coin.sondezi@gmail.com" method="POST">
+        <input type="text" name="name" placeholder="Your Name" required>
+        <input type="email" name="email" placeholder="Your Email" required>
+        <select name="topic" aria-label="Topic">
+          <option value="Hiring">Hiring</option>
+          <option value="Collaboration">Collaboration</option>
+          <option value="Translation">Translation</option>
+          <option value="Other">Other</option>
+        </select>
+        <textarea name="message" placeholder="Your Message" required></textarea>
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_subject" value="New CV Contact Form Submission">
+        <input type="hidden" name="_next" value="" id="nextField">
+        <button type="submit" class="submit-btn">📩 Send Message</button>
+      </form>
+
+      <div class="panel" style="margin-top:12px;">
+        <div class="meta">Based in Vryheid, South Africa</div>
+        <div style="position:relative; padding-top:56.25%; border-radius: var(--radius); overflow:hidden; border:1px solid var(--border);">
+          <iframe style="position:absolute; inset:0; width:100%; height:100%; border:0;" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=Vryheid,South+Africa&output=embed"></iframe>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Floating Hire Me button available on all tabs -->
+  <div class="floating-cta">
+    <a href="mailto:coin.sondezi@gmail.com" class="btn primary">💼 Hire Me</a>
+  </div>
+
+  <!-- Thank You Modal -->
+  <div id="thankyouModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="tyTitle">
+    <div class="card">
+      <h3 id="tyTitle" style="color:var(--accent); margin-bottom:6px;">Thank you! 🎉</h3>
+      <p>Your message has been sent. I’ll get back to you shortly.</p>
+      <div class="pill-row" style="justify-content:center; margin-top:12px;">
+        <button class="btn" id="closeModal">Close</button>
+        <a class="btn ghost" href="#tab-home">Back to Home</a>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="accent-picker">
+      <span class="meta">Accent:</span>
+      <span class="swatch" data-accent="#0ea5e9" title="Cyan" style="background:#0ea5e9"></span>
+      <span class="swatch" data-accent="#f59e0b" title="Amber" style="background:#f59e0b"></span>
+      <span class="swatch" data-accent="#10b981" title="Emerald" style="background:#10b981"></span>
+      <span class="swatch" data-accent="#ef4444" title="Red" style="background:#ef4444"></span>
+      <span class="swatch" data-accent="#a855f7" title="Purple" style="background:#a855f7"></span>
+    </div>
+    <div style="margin-top:6px;">© <span id="year"></span> Nkosenhle Mesuli Sondezi · Last updated 2025</div>
+  </footer>
+
+  <script>
+    // Theme persistence (purple in dark)
+    const themeToggle = document.getElementById('themeToggle');
+    const setThemeBtn = (mode)=> themeToggle.textContent = mode === 'dark' ? '☀️ Light' : '🌙 Dark';
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) { document.documentElement.setAttribute('data-theme', savedTheme); setThemeBtn(savedTheme); }
+    else if (window.matchMedia('(prefers-color-scheme: dark)').matches) { document.documentElement.setAttribute('data-theme','dark'); setThemeBtn('dark'); }
+    themeToggle.addEventListener('click', ()=>{ const cur = document.documentElement.getAttribute('data-theme'); const next = cur==='dark'?'light':'dark'; document.documentElement.setAttribute('data-theme', next); localStorage.setItem('theme', next); setThemeBtn(next); });
+
+    // Accent picker
+    document.querySelectorAll('.swatch').forEach(s => { s.addEventListener('click', () => { const v = s.getAttribute('data-accent'); document.documentElement.style.setProperty('--accent', v); localStorage.setItem('accent', v); }); });
+    const savedAccent = localStorage.getItem('accent'); if (savedAccent) document.documentElement.style.setProperty('--accent', savedAccent);
+
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Tabs control with fade/slide animation
+    const tabButtons = {
+      home: document.getElementById('tab-home-btn'),
+      cv: document.getElementById('tab-cv-btn'),
+      site: document.getElementById('tab-site-btn'),
+      translate: document.getElementById('tab-translate-btn'),
+      blog: document.getElementById('tab-blog-btn'),
+      contact: document.getElementById('tab-contact-btn')
+    };
+    const tabPanels = {
+      home: document.getElementById('tab-home'),
+      cv: document.getElementById('tab-cv'),
+      site: document.getElementById('tab-site'),
+      translate: document.getElementById('tab-translate'),
+      blog: document.getElementById('tab-blog'),
+      contact: document.getElementById('tab-contact')
+    };
+
+    function switchTab(key){
+      // update buttons
+      Object.entries(tabButtons).forEach(([k,btn])=> btn.setAttribute('aria-selected', k===key ? 'true' : 'false'));
+      // animate panels
+      Object.entries(tabPanels).forEach(([k,p])=>{
+        if(k===key){
+          p.classList.remove('hidden');
+          p.classList.add('fade-slide-enter');
+          requestAnimationFrame(()=>{ p.classList.add('fade-slide-active'); p.classList.remove('fade-slide-enter'); });
+          // trigger skill bars when CV becomes visible
+          if(key==='cv') animateSkillBars();
+        } else {
+          p.classList.add('hidden');
+          p.classList.remove('fade-slide-active');
+        }
+      });
+      history.replaceState(null, '', `#${key}`);
+    }
+
+    Object.entries(tabButtons).forEach(([k,btn])=> btn.addEventListener('click', ()=> switchTab(k)));
+
+    // Deep-link support
+    const hashMap = { '#home':'home', '#cv':'cv', '#site':'site', '#translate':'translate', '#blog':'blog', '#contact':'contact' };
+    const initial = hashMap[location.hash] || 'home';
+    switchTab(initial);
+
+    // Progress bars (animate on first reveal)
+    let skillsAnimated = false;
+    function animateSkillBars(){
+      if(skillsAnimated) return; skillsAnimated = true;
+      document.querySelectorAll('#tab-cv .bar > span').forEach(el=>{ el.style.width = el.style.getPropertyValue('--w') || '80%'; el.style.transition = 'width 1.1s ease'; });
+    }
+
+    // Stats counters when CV tab revealed
+    function animateCounters(){
+      document.querySelectorAll('#tab-cv .stat .num').forEach(el=>{
+        const target = +el.dataset.count; let cur = 0; const step = Math.max(1, Math.ceil(target/40));
+        const stepper = ()=>{ cur += step; if(cur>target) cur=target; el.textContent = cur; if(cur<target) requestAnimationFrame(stepper); };
+        stepper();
+      });
+    }
+    // watch when CV panel becomes visible
+    const cvObserver = new MutationObserver(()=>{ if(!tabPanels.cv.classList.contains('hidden')) animateCounters(); });
+    cvObserver.observe(tabPanels.cv, { attributes:true, attributeFilter:['class'] });
+
+    // Demo translator (placeholder)
+    const demoBtn = document.getElementById('demoTranslateBtn');
+    if(demoBtn){ demoBtn.addEventListener('click', ()=>{
+      const text = document.getElementById('demoText').value.trim();
+      const from = document.getElementById('demoFrom').value;
+      const to = document.getElementById('demoTo').value;
+      const out = document.getElementById('demoOut');
+      if(!text){ out.value = '(enter some text to preview)'; return; }
+      out.value = `[Demo] ${from} → ${to}:\n` + text.split('').reverse().join('');
+    });}
+
+    // Contact success handling
+    const nextField = document.getElementById('nextField');
+    if(nextField) nextField.value = location.origin + location.pathname + '#contact';
+
+    const modal = document.getElementById('thankyouModal');
+    const closeModal = document.getElementById('closeModal');
+    function showModal(){ modal.classList.add('show'); }
+    function hideModal(){ modal.classList.remove('show'); history.replaceState(null, '', location.pathname + '#contact'); }
+    if (location.search.includes('success=' ) || location.hash === '#thanks'){ showModal(); }
+    if (closeModal) closeModal.addEventListener('click', hideModal);
+    if (modal) modal.addEventListener('click', (e)=>{ if(e.target===modal) hideModal(); });
+  </script>
+</body>
+</html>
