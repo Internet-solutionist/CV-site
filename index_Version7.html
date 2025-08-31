@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Nkosenhle Mesuli Sondezi — Portfolio</title>
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css?family=Inter:400,600|Roboto+Mono:400,700&display=swap" rel="stylesheet" />
+  <script src="https://kit.fontawesome.com/8e1b3b2b6b.js" crossorigin="anonymous"></script>
+  <!-- PDF.js for PDF text extraction -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.min.js"></script>
+  <style>
+    :root {
+      --primary: #1e293b;
+      --secondary: #6366f1;
+      --accent: #c026d3;
+      --bg: #f8fafc;
+      --text: #22223b;
+      --highlight: #e0e7ff;
+      --card: #fff;
+      --radius: 19px;
+      --border: #cbd5e1;
+      --shadow: 0 4px 16px rgba(30,41,59,0.09);
+      --mono: 'Roboto Mono', monospace;
+      --font: 'Inter', Arial, sans-serif;
+      --cv-gradient: linear-gradient(135deg, #e0e7ff 0%, #c026d3 100%);
+    }
+    html, body {margin:0; padding:0; font-family:var(--font); background:var(--bg); color:var(--text);}
+    body.dark-mode { background: #181a21; color: #e5e7eb;}
+    body.dark-mode .card, body.dark-mode .modal .card {background: #23263b; color: #e5e7eb;}
+    header {
+      background: var(--primary); color: #fff; padding: 3.5rem 1rem 4.5rem 1rem; text-align: center; position: relative;
+      box-shadow: 0 2px 12px rgba(30,41,59,0.09);
+    }
+    .theme-switch { position: absolute; top: 1.4rem; right: 1.2rem; cursor:pointer; background:none; border:none; color:#fff; font-size:1.4rem; }
+    .roles { display: flex; flex-wrap: wrap; gap: 1.2rem; margin: 1.9rem 0 0 0; justify-content: center;}
+    .role-badge {background: var(--highlight); color: var(--secondary); border-radius: 1.7rem; padding: 0.44rem 1.3rem; font-size: 1.13rem; font-family: var(--mono);}
+    nav {
+      background: var(--highlight);
+      padding: 0.6rem 0.5rem;
+      display: flex;
+      justify-content: center;
+      gap: 1.3rem;
+      position: sticky;
+      top: 0;
+      z-index: 11;
+      box-shadow: 0 3px 8px rgba(60,60,100,0.06);
+    }
+    nav a {
+      color: var(--primary);
+      font-weight: 600;
+      text-decoration: none;
+      padding: 0.23rem 0.72rem;
+      border-radius: 5px;
+      font-family: var(--mono);
+      font-size: 1.08em;
+      transition: background 0.2s, color 0.2s;
+    }
+    nav a.active, nav a:hover {background: var(--secondary); color: #fff;}
+    main {max-width: 900px; margin: -3.8rem auto 0 auto; padding: 0 1rem 2rem 1rem;}
+    section {margin-bottom: 2.7rem;}
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 2.1rem 1.5rem;
+      margin-bottom: 2rem;
+      transition: background 0.3s, color 0.3s;
+    }
+    h1, h2, h3 {
+      font-family: var(--font);
+      font-weight: 700;
+      margin-bottom: 0.7em;
+      margin-top: 0.5em;
+    }
+    h1 { font-size: 2.45rem; letter-spacing: -1.5px;}
+    h2 { font-size: 1.6rem; color: var(--secondary);}
+    h3 { color: var(--accent);}
+    .tagline { font-size: 1.16rem; font-style: italic; color: #c7d2fe;}
+    .section-title {display: flex; align-items: center; gap: 0.7em; font-size: 1.27rem; margin-bottom: 1.13em;}
+    .pill-row { display: flex; flex-wrap: wrap; gap: 1em;}
+    .pill-row li, .pill-row .btn, .pill-row .ghost {background: var(--highlight); color: var(--primary); border-radius: 1em; padding: 0.36em 1.12em; font-size: 1em; font-family: var(--mono); border:none; cursor:pointer;}
+    .pill-row .ghost { background:none; color: var(--secondary); border: 1px solid var(--secondary);}
+    .submit-btn, .btn {background: var(--accent); color: #fff; font-weight: 700; border: none; border-radius: 1.1em; padding: .7em 1.3em; font-size: 1.1em; cursor: pointer;}
+    .submit-btn:hover, .btn:hover {background: var(--secondary);}
+    .blog-upload, .trans-upload { display: flex; flex-direction: column; gap: .6em; margin-bottom: 1em;}
+    input, select, textarea {width: 100%; max-width: 410px; margin-bottom: .8em; padding: .7em; border-radius: .7em; border: 1px solid var(--border); font-size: 1em; font-family: var(--font);}
+    textarea { min-height: 88px;}
+    .blog-entry, .translation-entry {background: var(--highlight); padding: 1em 1.2em; margin-bottom: 1.2em; border-radius: .7em;}
+    .blog-entry .title, .translation-entry .title { font-weight: 700; font-size: 1.15em;}
+    .blog-entry .date, .translation-entry .date { font-size: .97em; color: #64748b;}
+    .blog-entry img { max-width:180px; border-radius: 8px; margin:9px 0;}
+    .translation-entry .content {margin-top: 0.4em;}
+    .floating-cta { position: fixed; bottom: 26px; right: 38px; z-index: 30;}
+    .floating-cta .btn.primary {background: var(--secondary); color: #fff; font-size: 1.1em; padding: 0.7em 1.6em; border-radius: 2em; box-shadow: 0 1px 8px rgba(44,44,88,0.13);}
+    .floating-cta .btn.primary:hover {background: var(--accent);}
+    .modal {display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(30,41,59, 0.42); justify-content: center; align-items: center; z-index: 100;}
+    .modal.open { display: flex;}
+    .modal .card {max-width: 370px; width: 100%; padding: 1.5em 1.3em; text-align: center; border-radius: var(--radius);}
+    .cv-preview {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: 0 1px 18px rgba(99,102,241,0.13), 0 0px 0px 6px #e0e7ff inset;
+      padding: 2em 1.5em 1.5em 1.5em;
+      margin-bottom: 1em;
+      font-family: var(--mono);
+      position: relative;
+      overflow: hidden;
+      min-height: 230px;
+    }
+    .cv-preview:before {
+      content: "";
+      position: absolute;
+      z-index: 0;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background: var(--cv-gradient);
+      opacity: 0.13;
+      pointer-events: none;
+    }
+    .cv-content {position:relative; z-index:1;}
+    .cv-header {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1em; margin-bottom: .8em;
+    }
+    .cv-header .cv-avatar {
+      width: 64px; height: 64px; border-radius: 50%; border: 2px solid var(--secondary); object-fit: cover;
+      background: #fff;
+      box-shadow: 0 2px 20px #c026d3a6;
+    }
+    .cv-header .cv-title {
+      font-weight: 900;
+      font-size: 1.3em;
+      letter-spacing: -1px;
+      color: var(--accent);
+    }
+    .cv-header .cv-email {
+      font-size: 0.98em;
+      color: var(--secondary);
+      text-decoration: underline;
+    }
+    .cv-section-title {
+      font-size: 1.04em;
+      color: var(--secondary);
+      font-weight: bold;
+      margin:.5em 0 .1em 0;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      background: var(--highlight);
+      display: inline-block;
+      padding: 0 .4em;
+      border-radius: .3em;
+    }
+    .cv-badges {display:flex;flex-wrap:wrap;gap:0.7em;margin:.2em 0;}
+    .cv-badge {background:var(--accent);color:#fff;padding:.2em .8em;border-radius:1em;font-size:.95em;}
+    .cv-list {margin:0.2em 0 0.5em 1em;padding:0;}
+    .cv-list li {margin-bottom:.17em;}
+    .cv-lang-row{display:flex;gap:1em;align-items:center;}
+    .cv-lang-name{font-weight:600;color:var(--primary);}
+    .cv-lang-level{color:var(--accent);font-size:.97em;}
+    .cv-highlight {color:var(--accent);}
+    .cv-meta{color:#64748b;font-size:.96em;}
+    /* Blog Masonry */
+    #blogEntries {display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 1.2em;}
+    @media (max-width: 700px) {
+      nav { gap: 0.5em; }
+      main { padding: 0 0.3em; }
+      .card { padding: 1em; }
+      .roles { gap: 0.7em; }
+      .floating-cta { right: 12px; bottom: 10px;}
+      #blogEntries {grid-template-columns: 1fr;}
+      .cv-header { flex-direction: column; align-items: flex-start; gap:.2em;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <button class="theme-switch" title="Toggle Dark/Light Mode" aria-label="Theme Switch" id="themeBtn">
+      <i class="fas fa-moon"></i>
+    </button>
+    <h1>Nkosenhle Mesuli Sondezi</h1>
+    <p class="tagline">Linguist • Software Developer • Physics & Mathematics Student • Tutor • Translator</p>
+    <div class="roles">
+      <div class="role-badge"><i class="fas fa-language"></i> Linguist (South African Languages)</div>
+      <div class="role-badge"><i class="fas fa-code"></i> Software Dev</div>
+      <div class="role-badge"><i class="fas fa-atom"></i> Physics Student</div>
+      <div class="role-badge"><i class="fas fa-square-root-alt"></i> Math Student</div>
+      <div class="role-badge"><i class="fas fa-chalkboard-teacher"></i> Tutor</div>
+      <div class="role-badge"><i class="fas fa-globe"></i> Translator</div>
+      <div class="role-badge"><i class="fas fa-language"></i> 5-Spoken Languages</div>
+    </div>
+  </header>
+  <nav>
+    <a href="#about" class="nav-link active">About</a>
+    <a href="#professional" class="nav-link">Professional</a>
+    <a href="#interests" class="nav-link">Interests</a>
+    <a href="#projects" class="nav-link">Projects</a>
+    <a href="#blog" class="nav-link">Blog</a>
+    <a href="#translate" class="nav-link">Translation</a>
+    <a href="#cv" class="nav-link">CV</a>
+    <a href="#contact" class="nav-link">Contact</a>
+  </nav>
+  <main>
+    <!-- ABOUT -->
+    <section id="about" class="card">
+      <div class="section-title"><i class="fas fa-user"></i> About Me</div>
+      <div>
+        Hi! I'm Nkosenhle Mesuli Sondezi, a South African linguist, software developer, and science enthusiast. I thrive at the intersection of language and technology, with expertise in South African languages and five spoken languages. I love building bridges between cultures, teaching, and solving complex problems—whether in mathematics, software, or society.
+      </div>
+      <ul class="pill-row" style="margin-top:1em;">
+        <li>Linguistics (South African focus)</li>
+        <li>Software Development</li>
+        <li>Physics</li>
+        <li>Mathematics</li>
+        <li>Tutoring & Mentorship</li>
+        <li>Translation</li>
+        <li>Science Communication</li>
+      </ul>
+      <div class="meta" style="margin-top:1.5em;">
+        <i class="fas fa-envelope"></i> <a href="mailto:coin.sondezi@gmail.com" style="color:var(--secondary);text-decoration:underline;">coin.sondezi@gmail.com</a>
+      </div>
+    </section>
+    <!-- PROFESSIONAL -->
+    <section id="professional" class="card">
+      <div class="section-title"><i class="fas fa-briefcase"></i> Professional & Academic</div>
+      <h3>Linguist & Translator</h3>
+      <p>
+        <b>Expertise:</b> isiZulu, isiXhosa, Sesotho, Setswana, English, French.<br>
+        <b>Domains:</b> Academic research, technical, literary, and legal translation. Passionate about language preservation, multilingual NLP, and the creative use of South African languages in digital spaces.
+      </p>
+      <h3>Software Developer</h3>
+      <p>
+        <b>Stack:</b> Python, JavaScript, HTML/CSS, Java, Node.js, and computational linguistics tools.<br>
+        <b>Interests:</b> AI, open source, educational tech, and digital inclusion projects.
+      </p>
+      <h3>Physics & Mathematics Student</h3>
+      <p>
+        <b>Studies:</b> BSc (in progress). Areas: Quantum mechanics, electromagnetism, advanced calculus, mathematical modelling.<br>
+        <b>Achievements:</b> National science competitions, open source math libraries, and student mentoring.
+      </p>
+      <h3>Tutor & Science Communicator</h3>
+      <p>
+        <b>Roles:</b> One-on-one and group tutoring for high school and university students in mathematics, physics, and languages.<br>
+        <b>Specialty:</b> Making complex ideas accessible and inspiring a love for STEM and languages.
+      </p>
+      <ul class="pill-row">
+        <li>Python</li>
+        <li>JavaScript</li>
+        <li>HTML/CSS</li>
+        <li>Java</li>
+        <li>LaTeX</li>
+        <li>Machine Learning</li>
+        <li>Academic Writing</li>
+        <li>Lesson Planning</li>
+        <li>Public Speaking</li>
+      </ul>
+    </section>
+    <!-- INTERESTS -->
+    <section id="interests" class="card">
+      <div class="section-title"><i class="fas fa-star"></i> Hobbies & Interests</div>
+      <ul class="pill-row">
+        <li>Language Learning</li>
+        <li>Code Challenges</li>
+        <li>Science Communication</li>
+        <li>Reading & Writing</li>
+        <li>Music & Rhythm</li>
+        <li>Puzzle Solving</li>
+        <li>Travel & Culture</li>
+        <li>Community Projects</li>
+        <li>AI & NLP</li>
+        <li>Open Source</li>
+      </ul>
+      <div class="meta" style="margin-top:1em;">
+        <i class="fas fa-language"></i> <b>Languages spoken:</b>
+        isiZulu (native), isiXhosa, Sesotho, English, French
+      </div>
+    </section>
+    <!-- PROJECTS -->
+    <section id="projects" class="card">
+      <div class="section-title"><i class="fas fa-laptop-code"></i> Projects</div>
+      <ul class="pill-row">
+        <li>Multilingual Dictionary App</li>
+        <li>Math Tutor Bot</li>
+        <li>Physics Problem Generator</li>
+        <li>Translation Portfolio</li>
+        <li>South African Languages Sentiment Analyzer</li>
+        <li>Open Educational Resources (OER) Hub</li>
+      </ul>
+    </section>
+    <!-- BLOG -->
+    <section id="blog" class="card">
+      <div class="section-title"><i class="fas fa-blog"></i> Blog</div>
+      <div class="blog-upload">
+        <form id="blogWriteForm" autocomplete="off">
+          <h3>Write a Blog Post</h3>
+          <input type="text" id="blogTitle" placeholder="Blog Title" required />
+          <textarea id="blogContent" placeholder="Write your post here..." required></textarea>
+          <input type="file" id="blogImage" accept="image/*" />
+          <button type="submit" class="submit-btn">Publish</button>
+        </form>
+        <form id="blogUploadForm">
+          <h3>Upload PDF or DOCX</h3>
+          <input type="file" id="blogFileInput" accept=".pdf,.docx" required />
+          <button type="submit" class="submit-btn">Extract & Publish</button>
+        </form>
+      </div>
+      <div id="blogEntries"></div>
+    </section>
+    <!-- TRANSLATION -->
+    <section id="translate" class="card">
+      <div class="section-title"><i class="fas fa-globe"></i> Translation Agent</div>
+      <div class="trans-upload">
+        <form id="translateWriteForm" autocomplete="off">
+          <h3>Write and Translate</h3>
+          <textarea id="transInput" placeholder="Enter text to translate" required></textarea>
+          <div style="display:flex;gap:1em;">
+            <select id="transSource">
+              <option value="auto">Auto</option>
+              <option value="en">English</option>
+              <option value="zu">Zulu</option>
+              <option value="xh">Xhosa</option>
+              <option value="st">Sesotho</option>
+              <option value="ts">Xitsonga</option>
+              <option value="tn">Setswana</option>
+              <option value="af">Afrikaans</option>
+              <option value="fr">French</option>
+            </select>
+            <span style="align-self:center;"><i class="fas fa-arrow-right"></i></span>
+            <select id="transTarget">
+              <option value="en">English</option>
+              <option value="zu">Zulu</option>
+              <option value="xh">Xhosa</option>
+              <option value="st">Sesotho</option>
+              <option value="ts">Xitsonga</option>
+              <option value="tn">Setswana</option>
+              <option value="af">Afrikaans</option>
+              <option value="fr">French</option>
+            </select>
+          </div>
+          <button type="submit" class="submit-btn">Translate & Publish</button>
+        </form>
+        <form id="translateUploadForm">
+          <h3>Upload PDF or DOCX to Translate</h3>
+          <input type="file" id="translateFileInput" accept=".pdf,.docx" required />
+          <div style="display:flex;gap:1em;">
+            <select id="uploadTransSource">
+              <option value="auto">Auto</option>
+              <option value="en">English</option>
+              <option value="zu">Zulu</option>
+              <option value="xh">Xhosa</option>
+              <option value="st">Sesotho</option>
+              <option value="ts">Xitsonga</option>
+              <option value="tn">Setswana</option>
+              <option value="af">Afrikaans</option>
+              <option value="fr">French</option>
+            </select>
+            <span style="align-self:center;"><i class="fas fa-arrow-right"></i></span>
+            <select id="uploadTransTarget">
+              <option value="en">English</option>
+              <option value="zu">Zulu</option>
+              <option value="xh">Xhosa</option>
+              <option value="st">Sesotho</option>
+              <option value="ts">Xitsonga</option>
+              <option value="tn">Setswana</option>
+              <option value="af">Afrikaans</option>
+              <option value="fr">French</option>
+            </select>
+          </div>
+          <button type="submit" class="submit-btn">Extract, Translate & Publish</button>
+        </form>
+      </div>
+      <div id="translationEntries"></div>
+    </section>
+    <!-- CV -->
+    <section id="cv" class="card">
+      <div class="section-title"><i class="fas fa-file-alt"></i> CV / Resume</div>
+      <div class="cv-btns">
+        <button class="btn" onclick="downloadCV()">Download PDF</button>
+        <button class="btn ghost" onclick="previewCV()">Preview</button>
+      </div>
+      <div class="cv-preview" id="cvPreview" tabindex="0" aria-label="CV Preview" style="display:none;">
+        <div class="cv-content">
+          <div class="cv-header">
+            <img src="https://api.dicebear.com/7.x/micah/svg?seed=Nkosenhle" alt="Nkosenhle Mesuli Sondezi" class="cv-avatar">
+            <div>
+              <div class="cv-title">Nkosenhle Mesuli Sondezi</div>
+              <div class="cv-meta">Vryheid, South Africa</div>
+              <a href="mailto:coin.sondezi@gmail.com" class="cv-email">coin.sondezi@gmail.com</a>
+            </div>
+          </div>
+          <div class="cv-section-title">About</div>
+          <div style="margin-bottom:.8em;">
+            Multilingual linguist, developer, and science communicator. Passionate about digital language preservation, AI, and empowering African languages in tech. Known for clear communication, innovation, and curiosity.
+          </div>
+          <div class="cv-section-title">Expertise</div>
+          <div class="cv-badges">
+            <div class="cv-badge">South African Languages</div>
+            <div class="cv-badge">Translation (5 spoken)</div>
+            <div class="cv-badge">Software Dev</div>
+            <div class="cv-badge">STEM Tutoring</div>
+            <div class="cv-badge">Physics & Math</div>
+          </div>
+          <div class="cv-section-title">Languages</div>
+          <div class="cv-lang-row"><span class="cv-lang-name">isiZulu</span> <span class="cv-lang-level">Native</span></div>
+          <div class="cv-lang-row"><span class="cv-lang-name">isiXhosa</span> <span class="cv-lang-level">Fluent</span></div>
+          <div class="cv-lang-row"><span class="cv-lang-name">Sesotho</span> <span class="cv-lang-level">Fluent</span></div>
+          <div class="cv-lang-row"><span class="cv-lang-name">English</span> <span class="cv-lang-level">Fluent</span></div>
+          <div class="cv-lang-row"><span class="cv-lang-name">French</span> <span class="cv-lang-level">Intermediate</span></div>
+          <div class="cv-section-title">Technical Skills</div>
+          <ul class="cv-list">
+            <li>Python, JavaScript, Java, HTML, CSS, LaTeX</li>
+            <li>AI, NLP, Chatbot Development</li>
+            <li>Open Source & Multilingual Digital Projects</li>
+            <li>Academic & Technical Writing</li>
+          </ul>
+          <div class="cv-section-title">Experience</div>
+          <ul class="cv-list">
+            <li><span class="cv-highlight">Linguist & Translator</span> — Researcher, translation (EN-ZU-XH-ST-FR), digital language tools development</li>
+            <li><span class="cv-highlight">Software Developer</span> — Apps for education and language, South African NLP projects</li>
+            <li><span class="cv-highlight">STEM Tutor</span> — Math, Physics, Coding for students and adults</li>
+            <li><span class="cv-highlight">Science Communicator</span> — Workshops, public talks, and media appearances</li>
+          </ul>
+          <div class="cv-section-title">Education</div>
+          <ul class="cv-list">
+            <li>BSc in Physics & Mathematics (in progress), University of KwaZulu-Natal</li>
+            <li>Diploma in Computational Linguistics</li>
+            <li>Certified South African Language Practitioner</li>
+            <li>Winner: National Youth Science Communication Award (2024)</li>
+          </ul>
+          <div class="cv-section-title">Projects</div>
+          <ul class="cv-list">
+            <li>Multilingual Dictionary App</li>
+            <li>Math Tutor Bot for African High Schools</li>
+            <li>SA Languages Sentiment Analyzer</li>
+            <li>Open Educational Resources Hub</li>
+          </ul>
+          <div class="cv-section-title">Contact</div>
+          <div>
+            <i class="fas fa-envelope"></i> <a href="mailto:coin.sondezi@gmail.com" style="color:var(--secondary);text-decoration:underline;">coin.sondezi@gmail.com</a>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- CONTACT -->
+    <section id="contact" class="card">
+      <h2>Contact Me</h2>
+      <p>Use the form below — it emails me directly via Formsubmit.</p>
+      <form action="https://formsubmit.co/coin.sondezi@gmail.com" method="POST" id="contactForm" target="hidden_iframe">
+        <input type="text" name="name" placeholder="Your Name" required />
+        <input type="email" name="email" placeholder="Your Email" required />
+        <select name="topic" aria-label="Topic">
+          <option value="Hiring">Hiring</option>
+          <option value="Collaboration">Collaboration</option>
+          <option value="Translation">Translation</option>
+          <option value="Other">Other</option>
+        </select>
+        <textarea name="message" placeholder="Your Message" required></textarea>
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_subject" value="New CV Contact Form Submission">
+        <input type="hidden" name="_next" value="" id="nextField">
+        <button type="submit" class="submit-btn">📩 Send Message</button>
+      </form>
+      <div class="panel" style="margin-top:12px;">
+        <div class="meta">Based in Vryheid, South Africa</div>
+        <div style="position:relative; padding-top:56.25%; border-radius: var(--radius); overflow:hidden; border:1px solid var(--border);">
+          <iframe style="position:absolute; inset:0; width:100%; height:100%; border:0;" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=Vryheid,South+Africa&output=embed"></iframe>
+        </div>
+      </div>
+      <iframe name="hidden_iframe" style="display:none;"></iframe>
+    </section>
+  </main>
+  <!-- Floating Hire Me button available on all tabs -->
+  <div class="floating-cta">
+    <a href="mailto:coin.sondezi@gmail.com" class="btn primary">💼 Hire Me</a>
+  </div>
+  <!-- Thank You Modal -->
+  <div id="thankyouModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="tyTitle">
+    <div class="card">
+      <h3 id="tyTitle" style="color:var(--accent); margin-bottom:6px;">Thank you! 🎉</h3>
+      <p>Your message has been sent. I’ll get back to you shortly.</p>
+      <div class="pill-row" style="justify-content:center; margin-top:12px;">
+        <button class="btn" id="closeModal">Close</button>
+        <a class="btn ghost" href="#about">Back to Top</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer" style="text-align:center; color:#64748b; padding:1.5em 0 0.7em 0;">
+    &copy; 2025 Nkosenhle Mesuli Sondezi &mdash; All rights reserved.<br>
+    Built with HTML, CSS & JavaScript.
+  </div>
+  <script>
+    // Smooth scroll and section highlighting
+    document.querySelectorAll('nav .nav-link').forEach(link => {
+      link.addEventListener('click', function(e){
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        window.scrollTo({ top: target.offsetTop - 55, behavior: 'smooth' });
+      });
+    });
+    // Highlight nav link on scroll
+    const navLinks = document.querySelectorAll('nav .nav-link');
+    const sections = Array.from(document.querySelectorAll('main > section'));
+    window.addEventListener('scroll', function(){
+      const scrollY = window.scrollY;
+      let current = sections[0].id;
+      for(const section of sections) {
+        if(section.offsetTop - 60 <= scrollY) current = section.id;
+      }
+      navLinks.forEach(l=>l.classList.remove('active'));
+      document.querySelector('nav a[href="#'+current+'"]').classList.add('active');
+    });
+
+    // Theme Switcher
+    const themeBtn = document.getElementById('themeBtn');
+    const icon = themeBtn.querySelector('i');
+    themeBtn.onclick = () => {
+      document.body.classList.toggle('dark-mode');
+      icon.classList.toggle('fa-sun');
+      icon.classList.toggle('fa-moon');
+    };
+
+    // --- BLOG LOGIC ---
+    let blogEntries = JSON.parse(localStorage.getItem('nks_blog')||'[]');
+    function renderBlog() {
+      const blogDiv = document.getElementById('blogEntries');
+      if(!blogEntries.length) {
+        blogDiv.innerHTML = '<div style="color:#888;margin:1em 0;">No blog posts yet. Start writing or upload one!</div>';
+        return;
+      }
+      blogDiv.innerHTML = blogEntries.map(entry => `
+        <div class="blog-entry">
+          <div class="title">${entry.title||''}</div>
+          <div class="date">${entry.date||''}</div>
+          ${entry.image ? `<img src="${entry.image}" alt="blog image">` : ''}
+          <div class="content">${(entry.content||"").replace(/\n/g,'<br>')}</div>
+        </div>
+      `).join('');
+    }
+    renderBlog();
+    // Write blog post
+    document.getElementById('blogWriteForm').onsubmit = function(e){
+      e.preventDefault();
+      const title = document.getElementById('blogTitle').value.trim();
+      const content = document.getElementById('blogContent').value.trim();
+      const date = new Date().toLocaleString();
+      const imageInput = document.getElementById('blogImage');
+      if(imageInput.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+          blogEntries.unshift({title, content, date, image:ev.target.result});
+          localStorage.setItem('nks_blog', JSON.stringify(blogEntries));
+          renderBlog();
+        };
+        reader.readAsDataURL(imageInput.files[0]);
+      } else {
+        blogEntries.unshift({title, content, date, image:null});
+        localStorage.setItem('nks_blog', JSON.stringify(blogEntries));
+        renderBlog();
+      }
+      e.target.reset();
+    };
+    // Extract text from PDF (helper)
+    async function extractTextFromPDF(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = async function() {
+          const typedArray = new Uint8Array(this.result);
+          const pdf = await window.pdfjsLib.getDocument({data:typedArray}).promise;
+          let text = '';
+          for(let i=1;i<=pdf.numPages;i++){
+            const page = await pdf.getPage(i);
+            const content = await page.getTextContent();
+            text += content.items.map(item=>item.str).join(' ') + '\n';
+          }
+          resolve(text);
+        };
+        reader.onerror = reject;
+        reader.readAsArrayBuffer(file);
+      });
+    }
+    // Extract text from DOCX (helper)
+    async function extractTextFromDocx(file) {
+      return new Promise((resolve,reject)=>{
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const arr = new Uint8Array(e.target.result);
+          const str = Array.from(arr).map(b=>String.fromCharCode(b)).join('');
+          const match = str.match(/<w:t>(.*?)<\/w:t>/g);
+          let docText = match ? match.map(x=>x.replace(/<.?w:t>/g,'')).join(' ') : 'Unable to extract text.';
+          resolve(docText);
+        };
+        reader.onerror = reject;
+        reader.readAsArrayBuffer(file);
+      });
+    }
+    // Upload PDF/DOCX blog post
+    document.getElementById('blogUploadForm').onsubmit = async function(e){
+      e.preventDefault();
+      const file = document.getElementById('blogFileInput').files[0];
+      if(!file) return;
+      let text='';
+      if(file.type==='application/pdf' || file.name.endsWith('.pdf')) {
+        text = await extractTextFromPDF(file);
+      } else if(file.type==='application/vnd.openxmlformats-officedocument.wordprocessingml.document' || file.name.endsWith('.docx')) {
+        text = await extractTextFromDocx(file);
+      } else {
+        alert("Unsupported file type!");
+        return;
+      }
+      blogEntries.unshift({title:file.name, content:text, date:new Date().toLocaleString(), image:null});
+      localStorage.setItem('nks_blog', JSON.stringify(blogEntries));
+      renderBlog();
+      e.target.reset();
+    };
+
+    // --- TRANSLATION LOGIC ---
+    let translationEntries = JSON.parse(localStorage.getItem('nks_translations')||'[]');
+    function renderTranslations() {
+      const div = document.getElementById('translationEntries');
+      if(!translationEntries.length) {
+        div.innerHTML = '<div style="color:#888;margin:1em 0;">No translations yet. Try writing or upload a document!</div>';
+        return;
+      }
+      div.innerHTML = translationEntries.map(entry=>`
+        <div class="translation-entry">
+          <div class="title">${entry.title||''}</div>
+          <div class="date">${entry.date||''}</div>
+          <div class="content"><b>Source:</b><br>${(entry.source||"").replace(/\n/g,'<br>')}</div>
+          <div class="content"><b>Translation:</b><br>${(entry.translation||"").replace(/\n/g,'<br>')}</div>
+        </div>
+      `).join('');
+    }
+    renderTranslations();
+    // Translate helper (LibreTranslate API)
+    async function translateText(q, source, target) {
+      const res = await fetch("https://libretranslate.de/translate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ q, source, target, format: "text" })
+      });
+      const data = await res.json();
+      return data.translatedText || "Translation failed (API error).";
+    }
+    // Write translation
+    document.getElementById('translateWriteForm').onsubmit = async function(e){
+      e.preventDefault();
+      const sourceText = document.getElementById('transInput').value.trim();
+      const sourceLang = document.getElementById('transSource').value;
+      const targetLang = document.getElementById('transTarget').value;
+      const translation = await translateText(sourceText, sourceLang, targetLang);
+      translationEntries.unshift({
+        title:"Manual Translation "+new Date().toLocaleTimeString(),
+        source:sourceText, translation, date:new Date().toLocaleString()
+      });
+      localStorage.setItem('nks_translations', JSON.stringify(translationEntries));
+      renderTranslations();
+      e.target.reset();
+    };
+    // Upload and translate
+    document.getElementById('translateUploadForm').onsubmit = async function(e){
+      e.preventDefault();
+      const file = document.getElementById('translateFileInput').files[0];
+      if(!file) return;
+      let text='';
+      if(file.type==='application/pdf' || file.name.endsWith('.pdf')) {
+        text = await extractTextFromPDF(file);
+      } else if(file.type==='application/vnd.openxmlformats-officedocument.wordprocessingml.document' || file.name.endsWith('.docx')) {
+        text = await extractTextFromDocx(file);
+      } else {
+        alert("Unsupported file type!");
+        return;
+      }
+      const sourceLang = document.getElementById('uploadTransSource').value;
+      const targetLang = document.getElementById('uploadTransTarget').value;
+      const translation = await translateText(text, sourceLang, targetLang);
+      translationEntries.unshift({
+        title:file.name+" (uploaded "+new Date().toLocaleTimeString()+")",
+        source:text, translation, date:new Date().toLocaleString()
+      });
+      localStorage.setItem('nks_translations', JSON.stringify(translationEntries));
+      renderTranslations();
+      e.target.reset();
+    };
+
+    // --- CV LOGIC ---
+    function downloadCV() {
+      const cvText = document.querySelector('.cv-preview').innerText;
+      const blob = new Blob([cvText], {type:'text/plain'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = "Nkosenhle_Sondezi_CV.txt";
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(()=>{ document.body.removeChild(a); URL.revokeObjectURL(url);}, 300);
+    }
+    function previewCV() {
+      const cvDiv = document.getElementById('cvPreview');
+      cvDiv.style.display = cvDiv.style.display == 'block' ? 'none' : 'block';
+      if(cvDiv.style.display == 'block') cvDiv.focus();
+    }
+
+    // Contact Form with Thank You modal (FormSubmit)
+    document.getElementById('contactForm').onsubmit = function(e){
+      setTimeout(function(){
+        document.getElementById('thankyouModal').classList.add('open');
+      }, 900);
+    };
+    document.getElementById('closeModal').onclick = function(){
+      document.getElementById('thankyouModal').classList.remove('open');
+      window.scrollTo({top:0,behavior:'smooth'});
+    };
+    document.addEventListener('keydown', function(e){
+      if(e.key=='Escape'){
+        document.getElementById('thankyouModal').classList.remove('open');
+      }
+    });
+  </script>
+</body>
+</html>
